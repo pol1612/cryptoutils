@@ -5,11 +5,21 @@ package cat.uvic.teknos.m09.polsane.cryptoutils;
 
 import cat.uvic.teknos.m09.polsane.cryptoutils.CryptoUtils;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CryptoUtilsTest {
-    /*@Test void someLibraryMethodReturnsTrue() {
-        CryptoUtils classUnderTest = new CryptoUtils();
-        assertTrue(classUnderTest.someLibraryMethod(), "someLibraryMethod should return 'true'");
-    }*/
+    @Test void When_Hash1SameAlgorithmAndNoSaltAsHash2_Expect_doesHash1EqualsHash2AsTrue() throws IOException, NoSuchAlgorithmException {
+        synchronized (CryptoUtils.class) {
+            var message = "message";
+            var digestResult1 = CryptoUtils.hash(message.getBytes());
+            var digestResult2=CryptoUtils.hash(message.getBytes());
+            assertTrue(digestResult1.getHash().equals(digestResult2.getHash()));
+        }
+    }
+    
 }

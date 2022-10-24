@@ -56,4 +56,8 @@ public class CryptoUtils {
         securerandom.nextBytes(salt);
         return salt;
     }
+
+    public static Properties getProperties() {
+        return properties;
+    }
 }
