@@ -3,6 +3,57 @@
  */
 package cat.uvic.teknos.m09.polsane.cryptoutils;
 
-public class CryptoUtils {
+import cat.uvic.teknos.m09.polsane.cryptoutils.datastructures.DigestResult;
+import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.AlgorithmNotFoundException;
 
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Properties;
+
+import static java.util.Base64.getEncoder;
+
+public class CryptoUtils {
+    public static Properties properties;
+    static {
+        try {
+            properties=new Properties();
+            properties.load(CryptoUtils.class.getResourceAsStream("/cryptoUtils.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static DigestResult hash(byte[] message)  {
+        byte[] salt =null;
+        DigestResult digestResult;
+
+        var hashAlgorithm= (String) properties.get("hash.algorithm");
+        boolean hashSalt=Boolean.parseBoolean((String) properties.get("hash.salt"));
+
+        var dataBytes = message;
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance(hashAlgorithm);
+        } catch (NoSuchAlgorithmException e) {
+            throw new AlgorithmNotFoundException(e);
+        }
+        if(hashSalt) {
+            salt = getSalt();
+            messageDigest.update(salt);
+        }
+        var digest =messageDigest.digest(dataBytes);
+        if(hashSalt) {
+            digestResult = new DigestResult(digest, salt, hashAlgorithm);
+        }else{
+            digestResult = new DigestResult(digest, hashAlgorithm);
+        }
+        return digestResult;
+    }
+    private static byte[] getSalt(){
+        var securerandom= new SecureRandom();
+        var salt=new byte[16];
+        securerandom.nextBytes(salt);
+        return salt;
+    }
 }
