@@ -42,7 +42,7 @@ public class CryptoUtils {
             salt = getSalt();
             messageDigest.update(salt);
         }
-        var digest =messageDigest.digest(dataBytes);
+        var digest =messageDigest.digest(message);
         if(hashSalt) {
             digestResult = new DigestResult(digest, salt, hashAlgorithm);
         }else{
