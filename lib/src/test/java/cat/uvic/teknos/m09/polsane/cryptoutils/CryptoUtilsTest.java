@@ -4,6 +4,7 @@
 package cat.uvic.teknos.m09.polsane.cryptoutils;
 
 import cat.uvic.teknos.m09.polsane.cryptoutils.CryptoUtils;
+import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.AlgorithmNotFoundException;
 import com.google.common.base.Ascii;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CryptoUtilsTest {
     @Test void When_Hash1SameAlgorithmAndNoSaltAsHash2_Expect_Hash1EqualsHash2AsTrue() {
         synchronized (CryptoUtils.class) {
+            CryptoUtils.getProperties().setProperty("hash.algorithm","SHA-256");
             CryptoUtils.getProperties().setProperty("hash.salt","false");
             var message = "message";
             var digestResult1 = CryptoUtils.hash(message.getBytes());
@@ -28,6 +30,7 @@ class CryptoUtilsTest {
     }
     @Test void When_Hash1SameAlgorithmAsHash2AndHasSaltAndHash2HasNoSalt_Expect_Hash1EqualsHash2AsFalse() {
         synchronized (CryptoUtils.class) {
+            CryptoUtils.getProperties().setProperty("hash.algorithm","SHA-256");
             CryptoUtils.getProperties().setProperty("hash.salt","true");
             var message = "message";
             var digestResult1 = CryptoUtils.hash(message.getBytes());
@@ -35,5 +38,13 @@ class CryptoUtilsTest {
             var digestResult2=CryptoUtils.hash(message.getBytes());
             assertFalse(Arrays.equals(digestResult1.getHash(),digestResult2.getHash()));
         }
+    }
+    @Test() void When_CreatingHashAlgorithmPropertyIsNotRight_Expect_AlgorithmNotFoundException() {
+        synchronized (CryptoUtils.class) {
+            CryptoUtils.getProperties().setProperty("hash.salt","false");
+            CryptoUtils.getProperties().setProperty("hash.algorithm","1234");
+            var message = "message";
+            assertThrows(AlgorithmNotFoundException.class, () -> CryptoUtils.hash(message.getBytes()));
+           }
     }
 }
