@@ -13,12 +13,21 @@ import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.AlgorithmNotFoundExcep
 import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.CryptoUtilsPropertiesException;
 
 import java.io.IOException;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Properties;
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 public class CryptoUtils {
     public static Properties properties;
+
     static {
         try {
             properties=new Properties();
@@ -36,7 +45,7 @@ public class CryptoUtils {
         byte[] salt =null;
         DigestResult digestResult;
 
-        var hashAlgorithm= (String) properties.get("hash.algorithm");
+        String hashAlgorithm= (String) properties.get("hash.algorithm");
         boolean hashSalt=Boolean.parseBoolean((String) properties.get("hash.salt"));
 
         MessageDigest messageDigest;
@@ -69,5 +78,47 @@ public class CryptoUtils {
      */
     public static Properties getProperties() {
         return properties;
+    }
+    public static byte[] encrypt(byte[] plainText, String password){
+        var secretKey=getPrivateKeyFromPassword(password);
+        try {
+            var cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            byte[] bytes=Base64.getDecoder().decode((properties.getProperty("symmetric.salt")).getBytes());
+            var iv =new IvParameterSpec(bytes);
+            cipher.init(Cipher.ENCRYPT_MODE,secretKey,iv);
+            var cipherText = cipher.doFinal(plainText);
+
+            return cipherText;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+    private static Key getPrivateKeyFromPassword(String password){
+        byte[] salt=Base64.getDecoder().decode((properties.getProperty("symmetric.salt")).getBytes());
+        int iterationCount=Integer.parseInt(properties.getProperty("symmetric.iterations"));
+        int keyLenght=Integer.parseInt(properties.getProperty("symmetric.keyLenght"));
+        String algorithm=properties.getProperty("symmetric.algorithm");
+        PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray(), salt, iterationCount, keyLenght);
+        SecretKey pbeKey = null;
+        try {
+            pbeKey = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(pbeKeySpec);
+        } catch (InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        return new SecretKeySpec(pbeKey.getEncoded(), algorithm);
     }
 }
