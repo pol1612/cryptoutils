@@ -87,7 +87,6 @@ public class CryptoUtils {
             var iv =new IvParameterSpec(bytes);
             cipher.init(Cipher.ENCRYPT_MODE,secretKey,iv);
             var cipherText = cipher.doFinal(plainText);
-
             return cipherText;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
@@ -104,6 +103,30 @@ public class CryptoUtils {
         }
 
 
+    }
+    public static byte[] decrypt(byte[] cipherText,String password){
+        var secretKey=getPrivateKeyFromPassword(password);
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            byte[] bytes=Base64.getDecoder().decode((properties.getProperty("symmetric.salt")).getBytes());
+            var iv =new IvParameterSpec(bytes);
+            cipher.init(Cipher.DECRYPT_MODE,secretKey,iv);
+            var plainText=cipher.doFinal(cipherText);
+            return plainText;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+            throw new RuntimeException(e);
+        }
     }
     private static Key getPrivateKeyFromPassword(String password){
         byte[] salt=Base64.getDecoder().decode((properties.getProperty("symmetric.salt")).getBytes());
