@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,6 +49,16 @@ class CryptoUtilsTest {
            AlgorithmNotFoundException algorithmNotFoundException=  assertThrows(AlgorithmNotFoundException.class, () ->
                    CryptoUtils.hash(message.getBytes()));
             Assertions.assertEquals("The algorithm of cryptoutils.properties does not exist.ck if it's written correctly and if before there is 'hash.algorithm=' and nothing else \n",algorithmNotFoundException.getMessage());
+        }
+    }
+    @Test() void When_EncryptingAndDecryptingText_Expect_InitialTextEqualsFinalTextAsTrue() {
+        synchronized (CryptoUtils.class) {
+            var initialTextString="my name is Pol";
+            var password="123";
+            var initialTextByteArr= initialTextString.getBytes();
+            byte[] encryptedTextByteArr =CryptoUtils.encrypt(initialTextByteArr,password);
+            byte[] decryptedTextByteArr=CryptoUtils.decrypt(encryptedTextByteArr,password);
+            assertTrue(Arrays.equals(initialTextByteArr,decryptedTextByteArr));
         }
     }
 }
