@@ -6,6 +6,7 @@ package cat.uvic.teknos.m09.polsane.cryptoutils;
 import cat.uvic.teknos.m09.polsane.cryptoutils.CryptoUtils;
 import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.AlgorithmNotFoundException;
 import com.google.common.base.Ascii;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -44,7 +45,9 @@ class CryptoUtilsTest {
             CryptoUtils.getProperties().setProperty("hash.salt","false");
             CryptoUtils.getProperties().setProperty("hash.algorithm","1234");
             var message = "message";
-            assertThrows(AlgorithmNotFoundException.class, () -> CryptoUtils.hash(message.getBytes()));
-           }
+           AlgorithmNotFoundException algorithmNotFoundException=  assertThrows(AlgorithmNotFoundException.class, () ->
+                   CryptoUtils.hash(message.getBytes()));
+            Assertions.assertEquals("The algorithm of cryptoutils.properties does not exist.ck if it's written correctly and if before there is 'hash.algorithm=' and nothing else \n",algorithmNotFoundException.getMessage());
+        }
     }
 }

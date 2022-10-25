@@ -43,7 +43,7 @@ public class CryptoUtils {
         try {
             messageDigest = MessageDigest.getInstance(hashAlgorithm);
         } catch (NoSuchAlgorithmException e) {
-            throw new AlgorithmNotFoundException(e);
+            throw new AlgorithmNotFoundException("The algorithm of cryptoutils.properties does not exist.ck if it's written correctly and if before there is 'hash.algorithm=' and nothing else \n");
         }
         if(hashSalt) {
             salt = getSalt();
