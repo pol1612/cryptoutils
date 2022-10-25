@@ -10,6 +10,7 @@ package cat.uvic.teknos.m09.polsane.cryptoutils;
 
 import cat.uvic.teknos.m09.polsane.cryptoutils.datastructures.DigestResult;
 import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.AlgorithmNotFoundException;
+import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.CryptoUtilsPropertiesException;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -21,9 +22,9 @@ public class CryptoUtils {
     static {
         try {
             properties=new Properties();
-            properties.load(CryptoUtils.class.getResourceAsStream("/cryptoUtils.properties"));
+            properties.load(CryptoUtils.class.getResourceAsStream("/cryptoutils.properties"));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CryptoUtilsPropertiesException("Unable to load the properties of cryptoutils.properties. Be sure to check if it's in the location '/' and its name is 'cryptoutils.properties'");
         }
     }
 
@@ -38,7 +39,6 @@ public class CryptoUtils {
         var hashAlgorithm= (String) properties.get("hash.algorithm");
         boolean hashSalt=Boolean.parseBoolean((String) properties.get("hash.salt"));
 
-        var dataBytes = message;
         MessageDigest messageDigest;
         try {
             messageDigest = MessageDigest.getInstance(hashAlgorithm);
