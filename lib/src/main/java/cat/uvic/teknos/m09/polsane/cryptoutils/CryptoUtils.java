@@ -80,6 +80,12 @@ public class CryptoUtils {
     public static Properties getProperties() {
         return properties;
     }
+    /**Encrypts a byte array using a key and returns the encrypted byte array
+     * The different algorithms and salts used in this method are defined in cryptoutils.properties
+     * @param plainText byte array to be encrypted
+     * @param password string that will be used to generate a key to encrypt the array
+     * @return a byte array encrypted using the key generated from the password
+     */
     public static byte[] encrypt(byte[] plainText, String password){
         var secretKey=getPrivateKeyFromPassword(password);
         var cipherAlgorithm=properties.getProperty("symmetric.cipherAlgorithm");
@@ -113,6 +119,13 @@ public class CryptoUtils {
 
 
     }
+
+    /**Decrypts a byte array using a key and returns the decrypted byte array
+     * The different algorithms and salts used in this method are defined in cryptoutils.properties
+     * @param cipherText byte array to be decrypted
+     * @param password string that will be used to generate a key to decrypt the array
+     * @return a byte array decrypted using the key generated from the password
+     */
     public static byte[] decrypt(byte[] cipherText,String password){
         var secretKey=getPrivateKeyFromPassword(password);
         var cipherAlgorithm=properties.getProperty("symmetric.cipherAlgorithm");
@@ -139,7 +152,7 @@ public class CryptoUtils {
         } catch (IllegalBlockSizeException e) {
             throw new RuntimeException(e);
         } catch (BadPaddingException e) {
-            throw new IncorrectKeyException("The private key used to decrypt is different from the one used to encrypt, check if the passwords used to generate the private keys are the same.");
+            throw new IncorrectKeyException("The private key used to decrypt is different from the one used to encrypt, check if the passwords used to generate the private keys are the same.\n",e);
         }
     }
     private static Key getPrivateKeyFromPassword(String password){
