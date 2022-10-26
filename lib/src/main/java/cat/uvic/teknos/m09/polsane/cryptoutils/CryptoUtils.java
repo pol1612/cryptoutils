@@ -26,7 +26,8 @@ import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 public class CryptoUtils {
-    public static Properties properties;
+    private static Properties properties;
+    private static byte[] symmetricEncriptionIvByteArr;
 
     static {
         try {
@@ -81,12 +82,22 @@ public class CryptoUtils {
     }
     public static byte[] encrypt(byte[] plainText, String password){
         var secretKey=getPrivateKeyFromPassword(password);
+        var cipherAlgorithm=properties.getProperty("symmetric.cipherAlgorithm");
         try {
-            var cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            byte[] bytes=Base64.getDecoder().decode((properties.getProperty("symmetric.salt")).getBytes());
-            var iv =new IvParameterSpec(bytes);
+            var cipher = Cipher.getInstance(cipherAlgorithm);
+
+            byte[] bytes=new byte[16];
+            SecureRandom random = new SecureRandom();
+            random.nextBytes(bytes);
+            symmetricEncriptionIvByteArr=bytes;
+
+            var iv =new IvParameterSpec(symmetricEncriptionIvByteArr);
+
+
             cipher.init(Cipher.ENCRYPT_MODE,secretKey,iv);
+
             var cipherText = cipher.doFinal(plainText);
+
             return cipherText;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
@@ -106,13 +117,17 @@ public class CryptoUtils {
     }
     public static byte[] decrypt(byte[] cipherText,String password){
         var secretKey=getPrivateKeyFromPassword(password);
+        var cipherAlgorithm=properties.getProperty("symmetric.cipherAlgorithm");
         Cipher cipher = null;
         try {
-            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            byte[] bytes=Base64.getDecoder().decode((properties.getProperty("symmetric.salt")).getBytes());
-            var iv =new IvParameterSpec(bytes);
+            cipher = Cipher.getInstance(cipherAlgorithm);
+
+            var iv =new IvParameterSpec(symmetricEncriptionIvByteArr);
+
             cipher.init(Cipher.DECRYPT_MODE,secretKey,iv);
+
             var plainText=cipher.doFinal(cipherText);
+
             return plainText;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
@@ -129,19 +144,30 @@ public class CryptoUtils {
         }
     }
     private static Key getPrivateKeyFromPassword(String password){
-        byte[] salt=Base64.getDecoder().decode((properties.getProperty("symmetric.salt")).getBytes());
+        String saltStr=properties.getProperty("symmetric.secretKeySalt");
+
+        byte[] salt= saltStr.getBytes();
+
+
         int iterationCount=Integer.parseInt(properties.getProperty("symmetric.iterations"));
+
         int keyLenght=Integer.parseInt(properties.getProperty("symmetric.keyLenght"));
-        String algorithm=properties.getProperty("symmetric.algorithm");
+
+        String secretKeyFactoryAlgorithm=properties.getProperty("symmetric.secretKeyFactoryAlgorithm");
+
+        String secretKeySpecAlgorithm=properties.getProperty("symmetric.secretKeySpecAlgorithm");
+
+
         PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray(), salt, iterationCount, keyLenght);
         SecretKey pbeKey = null;
         try {
-            pbeKey = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(pbeKeySpec);
+            pbeKey = SecretKeyFactory.getInstance(secretKeyFactoryAlgorithm).generateSecret(pbeKeySpec);
+            return new SecretKeySpec(pbeKey.getEncoded(), secretKeySpecAlgorithm);
         } catch (InvalidKeySpecException e) {
             throw new RuntimeException(e);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        return new SecretKeySpec(pbeKey.getEncoded(), algorithm);
+
     }
 }

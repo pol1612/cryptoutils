@@ -54,11 +54,12 @@ class CryptoUtilsTest {
     @Test() void When_EncryptingAndDecryptingText_Expect_InitialTextEqualsFinalTextAsTrue() {
         synchronized (CryptoUtils.class) {
             var initialTextString="my name is Pol";
-            var password="123";
+            var password="123pol";
             var initialTextByteArr= initialTextString.getBytes();
             byte[] encryptedTextByteArr =CryptoUtils.encrypt(initialTextByteArr,password);
             byte[] decryptedTextByteArr=CryptoUtils.decrypt(encryptedTextByteArr,password);
-            assertTrue(Arrays.equals(initialTextByteArr,decryptedTextByteArr));
+            String decryptedTex=new String(decryptedTextByteArr);
+            assertTrue(initialTextString.equals(decryptedTex));
         }
     }
 }
