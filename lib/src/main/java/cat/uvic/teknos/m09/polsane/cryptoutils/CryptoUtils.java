@@ -11,6 +11,7 @@ package cat.uvic.teknos.m09.polsane.cryptoutils;
 import cat.uvic.teknos.m09.polsane.cryptoutils.datastructures.DigestResult;
 import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.AlgorithmNotFoundException;
 import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.CryptoUtilsPropertiesException;
+import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.IncorrectKeyException;
 
 import java.io.IOException;
 import java.security.Key;
@@ -138,7 +139,7 @@ public class CryptoUtils {
         } catch (IllegalBlockSizeException e) {
             throw new RuntimeException(e);
         } catch (BadPaddingException e) {
-            throw new RuntimeException(e);
+            throw new IncorrectKeyException("The private key used to decrypt is different from the one used to encrypt, check if the passwords used to generate the private keys are the same.");
         }
     }
     private static Key getPrivateKeyFromPassword(String password){

@@ -5,10 +5,12 @@ package cat.uvic.teknos.m09.polsane.cryptoutils;
 
 import cat.uvic.teknos.m09.polsane.cryptoutils.CryptoUtils;
 import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.AlgorithmNotFoundException;
+import cat.uvic.teknos.m09.polsane.cryptoutils.exceptions.IncorrectKeyException;
 import com.google.common.base.Ascii;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import javax.crypto.BadPaddingException;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
@@ -46,8 +48,9 @@ class CryptoUtilsTest {
             CryptoUtils.getProperties().setProperty("hash.salt","false");
             CryptoUtils.getProperties().setProperty("hash.algorithm","1234");
             var message = "message";
-           AlgorithmNotFoundException algorithmNotFoundException=  assertThrows(AlgorithmNotFoundException.class, () ->
-                   CryptoUtils.hash(message.getBytes()));
+            AlgorithmNotFoundException algorithmNotFoundException=  assertThrows(AlgorithmNotFoundException.class, () ->
+                   CryptoUtils.hash(message.getBytes())
+            );
             Assertions.assertEquals("The algorithm of cryptoutils.properties does not exist.ck if it's written correctly and if before there is 'hash.algorithm=' and nothing else \n",algorithmNotFoundException.getMessage());
         }
     }
@@ -62,15 +65,16 @@ class CryptoUtilsTest {
             assertTrue(initialTextString.equals(decryptedTex));
         }
     }
-    /*@Test() void When_EncryptingAndDecryptingText_Expect_InitialTextEqualsFinalTextAsTrue() {
+    @Test() void When_EncryptingAndDecryptingTextUsingDifferent_Expect_InitialTextEqualsFinalTextAsTrue() {
         synchronized (CryptoUtils.class) {
             var initialTextString="my name is Pol";
             var password="123pol";
+            var password2="12345pol";
             var initialTextByteArr= initialTextString.getBytes();
             byte[] encryptedTextByteArr =CryptoUtils.encrypt(initialTextByteArr,password);
-            byte[] decryptedTextByteArr=CryptoUtils.decrypt(encryptedTextByteArr,password);
-            String decryptedTex=new String(decryptedTextByteArr);
-            assertTrue(initialTextString.equals(decryptedTex));
+            assertThrows(IncorrectKeyException.class, () ->
+                CryptoUtils.decrypt(encryptedTextByteArr,password2)
+            );
         }
-    }*/
+    }
 }
