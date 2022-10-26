@@ -27,7 +27,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 public class CryptoUtils {
     private static Properties properties;
-    private static byte[] symmetricEncriptionIvByteArr;
 
     static {
         try {
@@ -86,12 +85,10 @@ public class CryptoUtils {
         try {
             var cipher = Cipher.getInstance(cipherAlgorithm);
 
-            byte[] bytes=new byte[16];
-            SecureRandom random = new SecureRandom();
-            random.nextBytes(bytes);
-            symmetricEncriptionIvByteArr=bytes;
+            var ivStr=properties.getProperty("symmetric.encodedIvByteArr");
+            byte[] decodedIvByteArr=Base64.getDecoder().decode(ivStr);
 
-            var iv =new IvParameterSpec(symmetricEncriptionIvByteArr);
+            var iv =new IvParameterSpec(decodedIvByteArr);
 
 
             cipher.init(Cipher.ENCRYPT_MODE,secretKey,iv);
@@ -121,8 +118,9 @@ public class CryptoUtils {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance(cipherAlgorithm);
-
-            var iv =new IvParameterSpec(symmetricEncriptionIvByteArr);
+            var ivStr=properties.getProperty("symmetric.encodedIvByteArr");
+            byte[] decodedIvByteArr=Base64.getDecoder().decode(ivStr);
+            var iv =new IvParameterSpec(decodedIvByteArr);
 
             cipher.init(Cipher.DECRYPT_MODE,secretKey,iv);
 

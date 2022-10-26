@@ -51,7 +51,7 @@ class CryptoUtilsTest {
             Assertions.assertEquals("The algorithm of cryptoutils.properties does not exist.ck if it's written correctly and if before there is 'hash.algorithm=' and nothing else \n",algorithmNotFoundException.getMessage());
         }
     }
-    @Test() void When_EncryptingAndDecryptingText_Expect_InitialTextEqualsFinalTextAsTrue() {
+    @Test() void When_EncryptingAndDecryptingTextUsingSamePassword_Expect_InitialTextEqualsFinalTextAsTrue() {
         synchronized (CryptoUtils.class) {
             var initialTextString="my name is Pol";
             var password="123pol";
@@ -62,4 +62,15 @@ class CryptoUtilsTest {
             assertTrue(initialTextString.equals(decryptedTex));
         }
     }
+    /*@Test() void When_EncryptingAndDecryptingText_Expect_InitialTextEqualsFinalTextAsTrue() {
+        synchronized (CryptoUtils.class) {
+            var initialTextString="my name is Pol";
+            var password="123pol";
+            var initialTextByteArr= initialTextString.getBytes();
+            byte[] encryptedTextByteArr =CryptoUtils.encrypt(initialTextByteArr,password);
+            byte[] decryptedTextByteArr=CryptoUtils.decrypt(encryptedTextByteArr,password);
+            String decryptedTex=new String(decryptedTextByteArr);
+            assertTrue(initialTextString.equals(decryptedTex));
+        }
+    }*/
 }
