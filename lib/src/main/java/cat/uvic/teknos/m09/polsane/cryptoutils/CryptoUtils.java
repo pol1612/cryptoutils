@@ -11,6 +11,7 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.util.Properties;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -54,7 +55,7 @@ public class CryptoUtils {
         try {
             messageDigest = MessageDigest.getInstance(hashAlgorithm);
         } catch (NoSuchAlgorithmException e) {
-            throw new AlgorithmNotFoundException("The algorithm of cryptoutils.properties does not exist.ck if it's written correctly and if before there is 'hash.algorithm=' and nothing else \n");
+            throw new AlgorithmNotFoundException("The algorithm of cryptoutils.properties does not exist. check if it's written correctly and if before there is 'hash.algorithm=' and nothing else \n");
         }
         if(hashSalt) {
             salt = getSalt();
@@ -182,5 +183,4 @@ public class CryptoUtils {
             throw new RuntimeException(e);
         }
     }
-
 }

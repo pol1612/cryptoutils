@@ -1,7 +1,13 @@
 package cat.uvic.teknos.m09.polsane.cryptoutils.exceptions;
 
-
+/**An exception class that extends RuntimeException and is called when the algorithm used in hash(), set in cryptoutils.properties
+ * @author pol
+ * @see java.lang.RuntimeException
+ */
 public class AlgorithmNotFoundException extends RuntimeException{
+    /**
+     *
+     */
     public AlgorithmNotFoundException() {
     }
 
