@@ -1,10 +1,3 @@
-/**
- * This library contains methods related to cryptography and cyber-security.
- * It has a Properties attribute, initialized by a static initializer that
- * reads a cryptoutils.properties file.
- * @author pol.sane@uvic.cat
- * @author pol sañé jové
- */
 
 package cat.uvic.teknos.m09.polsane.cryptoutils;
 
@@ -26,6 +19,14 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
+/**
+ * This library contains methods related to cryptography and cyber-security.
+ * It has a Properties attribute, initialized by a static initializer that
+ * reads a cryptoutils.properties file.
+ * @author pol.sane@uvic.cat
+ * @author pol sañé jové
+ */
+
 public class CryptoUtils {
     private static Properties properties;
 
@@ -152,7 +153,7 @@ public class CryptoUtils {
         } catch (IllegalBlockSizeException e) {
             throw new RuntimeException(e);
         } catch (BadPaddingException e) {
-            throw new IncorrectKeyException("The private key used to decrypt is different from the one used to encrypt, check if the passwords used to generate the private keys are the same.\n",e);
+            throw new IncorrectKeyException("The private key used to decrypt is different from the one used to encrypt, check if the passwords used to generate the private keys are the same.");
         }
     }
     private static Key getPrivateKeyFromPassword(String password){
@@ -180,6 +181,6 @@ public class CryptoUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-
     }
+
 }

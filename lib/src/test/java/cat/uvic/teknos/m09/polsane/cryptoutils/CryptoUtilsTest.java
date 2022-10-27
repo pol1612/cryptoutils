@@ -65,7 +65,7 @@ class CryptoUtilsTest {
             assertTrue(initialTextString.equals(decryptedTex));
         }
     }
-    @Test() void When_EncryptingAndDecryptingTextUsingDifferent_Expect_InitialTextEqualsFinalTextAsTrue() {
+    @Test() void When_EncryptingAndDecryptingTextUsingDifferentPassword_Expect_InitialTextEqualsFinalTextAsTrue() {
         synchronized (CryptoUtils.class) {
             var initialTextString="my name is Pol";
             var password="123pol";

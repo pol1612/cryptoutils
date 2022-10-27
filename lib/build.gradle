@@ -9,6 +9,29 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
+    id 'maven-publish'
+}
+
+publishing{
+    repositories {
+        maven{
+            credentials {
+                username = "teknos2"
+                password = "Teknos01."
+            }
+            name="teknos"
+            url='http://164.68.111.12:8081/nexus/content/repositories/maven-releases'
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            groupId 'cat.uvic.teknos.m09.polsane'
+            artifactId 'cryptoutils'
+            version '1.0'
+            from components.java
+        }
+    }
 }
 
 repositories {
