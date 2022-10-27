@@ -29,7 +29,7 @@ publishing{
         maven(MavenPublication) {
             groupId 'cat.uvic.teknos.m09.polsane'
             artifactId 'cryptoutils'
-            version '1.1'
+            version '1.2'
             from components.java
         }
     }
