@@ -1,5 +1,6 @@
 package cat.uvic.teknos.m09.polsane.cryptoutils.exceptions;
 
+
 public class AlgorithmNotFoundException extends RuntimeException{
     public AlgorithmNotFoundException() {
     }
