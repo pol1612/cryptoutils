@@ -51,7 +51,7 @@ class CryptoUtilsTest {
             AlgorithmNotFoundException algorithmNotFoundException=  assertThrows(AlgorithmNotFoundException.class, () ->
                    CryptoUtils.hash(message.getBytes())
             );
-            Assertions.assertEquals("The algorithm of cryptoutils.properties does not exist.ck if it's written correctly and if before there is 'hash.algorithm=' and nothing else \n",algorithmNotFoundException.getMessage());
+            Assertions.assertEquals("The algorithm of cryptoutils.properties does not exist. check if it's written correctly and if before there is 'hash.algorithm=' and nothing else \n",algorithmNotFoundException.getMessage());
         }
     }
     @Test() void When_EncryptingAndDecryptingTextUsingSamePassword_Expect_InitialTextEqualsFinalTextAsTrue() {
